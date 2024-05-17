@@ -71,6 +71,7 @@ impl ShapeBuidler {
         end_angle: f64,
         stroke: impl Into<Stroke>,
     ) -> Mesh {
+        let stroke = stroke.into();
         let mut points = self.arc_points(radius, start_angle, end_angle);
 
         let closed = points
@@ -97,13 +98,15 @@ impl ShapeBuidler {
         color: Color32,
         stroke: impl Into<Stroke>,
     ) -> Mesh {
+        let stroke = stroke.into();
         let mut points = self.arc_points(radius, 0.0, TAU);
         points.pop();
 
-        self.tessellate_shape(Shape::convex_polygon(points, color, stroke.into()))
+        self.tessellate_shape(Shape::convex_polygon(points, color, stroke))
     }
 
     pub(crate) fn line_segment(&self, from: DVec3, to: DVec3, stroke: impl Into<Stroke>) -> Mesh {
+        let stroke = stroke.into();
         let mut points: [Pos2; 2] = Default::default();
 
         for (i, point) in points.iter_mut().enumerate() {
@@ -144,6 +147,7 @@ impl ShapeBuidler {
         fill: impl Into<Color32>,
         stroke: impl Into<Stroke>,
     ) -> Mesh {
+        let stroke = stroke.into();
         let points = points
             .iter()
             .filter_map(|pos| world_to_screen(self.viewport, self.mvp, *pos))
@@ -157,6 +161,7 @@ impl ShapeBuidler {
     }
 
     pub(crate) fn polyline(&self, points: &[DVec3], stroke: impl Into<Stroke>) -> Mesh {
+        let stroke = stroke.into();
         let points = points
             .iter()
             .filter_map(|pos| world_to_screen(self.viewport, self.mvp, *pos))
@@ -179,6 +184,7 @@ impl ShapeBuidler {
     ) -> Mesh {
         let angle_delta = end_angle - start_angle;
         let step_count = steps(angle_delta.abs());
+        let stroke = stroke.into();
 
         if step_count < 2 {
             return Mesh::default();
